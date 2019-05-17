@@ -38,6 +38,7 @@
     <!-- include only the Firebase features as you need -->
     <script src="/__/firebase/6.0.2/firebase-auth.js"></script>
     <script src="/__/firebase/6.0.2/firebase-database.js"></script>
+    <script src="/__/firebase/6.0.2/firebase-functions.js"></script>
     <script src="/__/firebase/6.0.2/firebase-messaging.js"></script>
     <script src="/__/firebase/6.0.2/firebase-storage.js"></script>
     <!-- initialize the SDK after all desired features are loaded -->
@@ -55,6 +56,23 @@
           if (user) {
             document.getElementById('signed-in').style.display = 'block';
             document.getElementById('signed-out').style.display = 'none';
+
+            let increment = firebase.functions().httpsCallable('increment');
+            let $value = document.getElementById('value');
+            document.getElementById('increment').addEventListener('click', function() {
+              console.log('calling');
+              increment()
+                .then(({ data }) => {
+                  console.log('data', data);
+                  $value.innerText = data;
+                })
+                .catch(err => {
+                  console.error(err);
+                });
+            });
+
+
+
           } else {
             document.getElementById('signed-in').style.display = 'none';
             document.getElementById('signed-out').style.display = 'block';
@@ -73,20 +91,6 @@
 
         document.getElementById('sign-out').addEventListener('click', function() {
           firebase.auth().signOut();
-        });
-
-        const increment = firebase.functions().httpsCallable('increment');
-        const $value = document.getElementById('value');
-        document.getElementById('increment').addEventListener('click', function() {
-          console.log('calling');
-          increment()
-            .then({ data } => {
-              console.log('data', data);
-              $value.innerText = data;
-            })
-            .catch(err => {
-              console.error(err);
-            });
         });
       });
     </script>
